@@ -5,6 +5,7 @@ const categorySchema = new Schema({
     type: String,
     required: [true, 'Please enter category name'],
     trim: true,
+    unique: true,
     maxLength: [50, 'Category name cannot exceed 50 characters']
   },
   posts: [{
