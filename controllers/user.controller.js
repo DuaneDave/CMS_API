@@ -26,6 +26,7 @@
 //     token,
 //   });
 // });
+const crypto = require('crypto');
 
 const UserRepo = require('../repositories/user.repository');
 const User = require('../models/user.model');
@@ -130,6 +131,43 @@ class UserController {
     }
 
     sendToken(user, 200, res);
+  });
+
+  forgotPassword = catchAsyncErrors(async (req, res, next) => {
+    const user = await User.findOne({ email: req.body.email });
+
+    if (!user)
+      return next(new ErrorHandler('User not found with this email', 404));
+
+    const resetToken = user.getResetPasswordToken();
+
+    await user.save({ validateBeforeSave: false });
+
+    const resetUrl = `${req.protocol}://${req.get(
+      'host'
+    )}/api/v1/user/reset_password/${resetToken}`;
+
+    const message = `Hello ${user.name}!\n\nYou requested a password update on CMS_API. Click the link below to set your new password for your account.\n\n${resetUrl}\n\nIf you have not requested this, or believe you've recieved this in error, contact support@CMS_API.com.`;
+
+    try {
+      await sendEmail({
+        email: user.email,
+        subject: 'CMS_API Password Recovery',
+        message,
+      });
+
+      res.status(200).json({
+        success: true,
+        message: `Email sent to: ${user.email}`,
+      });
+    } catch (error) {
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpire = undefined;
+
+      await user.save({ validateBeforeSave: false });
+
+      return next(new ErrorHandler(error.message, 500));
+    }
   });
 }
 
