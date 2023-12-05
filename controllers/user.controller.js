@@ -235,7 +235,14 @@ class UserController {
     });
   });
 
+  getAllUsers = catchAsyncErrors(async (req, res, next) => {
+    const users = await this.userRepo.getAll();
 
+    res.status(200).json({
+      success: true,
+      users,
+    });
+  });
 }
 
 module.exports = new UserController();
