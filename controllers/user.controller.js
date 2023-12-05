@@ -58,6 +58,7 @@ class UserController {
       token,
     });
   });
+
 }
 
 module.exports = new UserController();
