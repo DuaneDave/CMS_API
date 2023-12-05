@@ -37,18 +37,47 @@ class UserController {
     this.userRepo = new UserRepo();
   }
 
+  async userExists(email) {
+    return await this.userRepo.getOne({ email });
+  }
+
   registerUser = catchAsyncErrors(async (req, res, next) => {
-    const { name, email, password } = req.body;
+    const { name, email, password, googleAccessToken } = req.body;
 
-    const isExisting = await this.userRepo.getOne({ email });
+    let user;
 
-    if (isExisting) return next(new ErrorHandler('User already exists', 400));
+    if (googleAccessToken) {
+      console.log('here');
+      const fetchedUser = await fetch(
+        'https://www.googleapis.com/oauth2/v3/userinfo',
+        {
+          headers: {
+            Authorization: `Bearer ${googleAccessToken}`,
+          },
+        }
+      );
 
-    const user = await this.userRepo.create({
-      name,
-      email,
-      password,
-    });
+      const { given_name, email } = await fetchedUser.json();
+      const isExisting = await this.isExisting(email);
+
+      if (isExisting) return next(new ErrorHandler('User already exists', 400));
+
+      user = await this.userRepo.create({
+        name: given_name,
+        email,
+        password: email + process.env.GOOGLE_SECRET,
+      });
+    } else {
+      const isExisting = await this.userExists(email);
+
+      if (isExisting) return next(new ErrorHandler('User already exists', 400));
+
+      user = await this.userRepo.create({
+        name,
+        email,
+        password,
+      });
+    }
 
     const token = user.getJwtToken();
 
@@ -59,6 +88,7 @@ class UserController {
     });
   });
 
+ 
 }
 
 module.exports = new UserController();
