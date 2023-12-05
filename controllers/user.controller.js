@@ -133,6 +133,8 @@ class UserController {
     sendToken(user, 200, res);
   });
 
+  
+
   forgotPassword = catchAsyncErrors(async (req, res, next) => {
     const user = await User.findOne({ email: req.body.email });
 
@@ -169,6 +171,37 @@ class UserController {
       return next(new ErrorHandler(error.message, 500));
     }
   });
+
+  resetPassword = catchAsyncErrors(async (req, res, next) => {
+    const resetPasswordToken = crypto
+      .createHash('sha256')
+      .update(req.params.token)
+      .digest('hex');
+
+    const user = await this.userRepo.getOne({ resetPasswordToken });
+    const expired = new Date(user?.resetPasswordExpire) > new Date() || false;
+
+    if (!user || expired)
+      return next(
+        new ErrorHandler(
+          'Password reset token is invalid or has been expired',
+          400
+        )
+      );
+
+    if (req.body.password !== req.body.confirmPassword)
+      return next(new ErrorHandler('Password does not match', 400));
+
+    user.password = req.body.password;
+
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+
+    await user.save();
+
+    sendToken(user, 200, res);
+  });
+
 }
 
 module.exports = new UserController();
