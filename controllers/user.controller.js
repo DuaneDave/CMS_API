@@ -220,6 +220,22 @@ class UserController {
       user,
     });
   });
+
+  updateUserProfile = catchAsyncErrors(async (req, res, next) => {
+    const newUserData = {
+      name: req.body.name,
+      email: req.body.email,
+    };
+
+    const user = await this.userRepo.update(req.user.id, newUserData);
+
+    res.status(200).json({
+      success: true,
+      user,
+    });
+  });
+
+
 }
 
 module.exports = new UserController();
