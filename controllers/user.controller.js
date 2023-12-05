@@ -211,6 +211,15 @@ class UserController {
 
     sendToken(user, 200, res);
   });
+
+  getUserProfile = catchAsyncErrors(async (req, res, next) => {
+    const user = await this.userRepo.findById(req.user.id);
+
+    res.status(200).json({
+      success: true,
+      user,
+    });
+  });
 }
 
 module.exports = new UserController();
