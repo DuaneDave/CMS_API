@@ -4,7 +4,7 @@ class BaseRepository {
   }
 
   async getOne(id) {
-    return await this.model.findById(id);
+    return await this.model.findOne(id);
   }
 
   async getAll() {
