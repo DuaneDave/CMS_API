@@ -40,6 +40,17 @@ class CategoryController {
       category,
     });
   });
+
+  deleteCategory = catchAsyncErrors(async (req, res, next) => {
+    const { id } = req.params;
+
+    const category = await this.categoryRepo.delete(id);
+
+    res.status(200).json({
+      success: true,
+      category,
+    });
+  });
 }
 
 module.exports = new CategoryController();
