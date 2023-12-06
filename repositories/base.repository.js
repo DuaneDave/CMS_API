@@ -3,8 +3,8 @@ class BaseRepository {
     this.model = model;
   }
 
-  async getOne(id) {
-    return await this.model.findOne(id);
+  async getOne(param) {
+    return await this.model.findOne(param);
   }
 
   async getAll() {
@@ -33,6 +33,13 @@ class BaseRepository {
 
   async deleteMany(conditions) {
     return await this.model.deleteMany(conditions);
+  }
+
+  ok(res, code, data) {
+    return res.status(code).json({
+      success: true,
+      data,
+    });
   }
 }
 
