@@ -30,6 +30,12 @@ const userSchema = new Schema(
         message: 'Please select correct role',
       },
     },
+    posts: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Post',
+      },
+    ],
     resetPasswordToken: String,
     resetPasswordExpire: Date,
   },
