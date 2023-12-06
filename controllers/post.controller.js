@@ -1,3 +1,5 @@
+const Posts = require('../models/post.model');
+
 const PostRepo = require('../repositories/post.repository');
 const CategoryRepo = require('../repositories/category.repository');
 
@@ -30,6 +32,15 @@ class PostController {
     res.status(201).json({
       success: true,
       post,
+    });
+  });
+
+  getPosts = catchAsyncErrors(async (req, res, next) => {
+    const posts = await Posts.find().populate('categoryId', 'name');
+
+    res.status(200).json({
+      success: true,
+      posts,
     });
   });
 
