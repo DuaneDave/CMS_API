@@ -17,7 +17,7 @@ const postSchema = new Schema(
       type: String,
       required: [true, 'Please enter post content'],
     },
-    category: {
+    categoryId: {
       type: Schema.Types.ObjectId,
       ref: 'Category',
     },
