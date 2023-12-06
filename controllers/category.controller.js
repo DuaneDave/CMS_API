@@ -1,4 +1,3 @@
-const Category = require('../models/category.model');
 const CategoryRepo = require('../repositories/category.repository');
 
 const ErrorHandler = require('../utils/errorHandler');
