@@ -26,6 +26,10 @@ class BaseRepository {
   async delete(id) {
     return await this.model.findByIdAndDelete(id);
   }
+
+  async deleteMany(conditions) {
+    return await this.model.deleteMany(conditions);
+  }
 }
 
 module.exports = BaseRepository;
