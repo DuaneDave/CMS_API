@@ -2,7 +2,6 @@ const CategoryRepo = require('../repositories/category.repository');
 const PostRepo = require('../repositories/post.repository');
 const UserRepo = require('../repositories/user.repository');
 
-const ErrorHandler = require('../utils/errorHandler');
 const catchAsyncErrors = require('../middlewares/catchAsyncErrors');
 
 class CategoryController {
