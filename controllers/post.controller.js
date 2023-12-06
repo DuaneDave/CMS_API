@@ -36,19 +36,13 @@ class PostController {
     category.posts.push(post._id);
     await category.save();
 
-    res.status(201).json({
-      success: true,
-      post,
-    });
+    this.postRepo.ok(res, 201, post);
   });
 
   getPosts = catchAsyncErrors(async (req, res, next) => {
     const posts = await Posts.find().populate('categoryId authorId', 'name');
 
-    res.status(200).json({
-      success: true,
-      posts,
-    });
+    this.postRepo.ok(res, 200, posts);
   });
 
   editPost = catchAsyncErrors(async (req, res, next) => {
@@ -62,10 +56,7 @@ class PostController {
       categoryId,
     });
 
-    res.status(200).json({
-      success: true,
-      post,
-    });
+    this.postRepo.ok(res, 200, post);
   });
 
   deletePost = catchAsyncErrors(async (req, res, next) => {
@@ -81,10 +72,7 @@ class PostController {
       $pull: { posts: post._id },
     });
 
-    res.status(200).json({
-      success: true,
-      post,
-    });
+    this.postRepo.ok(res, 200, post);
   });
 }
 
