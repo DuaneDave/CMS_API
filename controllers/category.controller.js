@@ -16,19 +16,13 @@ class CategoryController {
 
     const category = await this.categoryRepo.create({ name });
 
-    res.status(201).json({
-      success: true,
-      category,
-    });
+    this.categoryRepo.ok(res, 201, category);
   });
 
   getAllCategories = catchAsyncErrors(async (req, res, next) => {
     const categories = await this.categoryRepo.getAll();
 
-    res.status(200).json({
-      success: true,
-      categories,
-    });
+    this.categoryRepo.ok(res, 200, categories);
   });
 
   editCategory = catchAsyncErrors(async (req, res, next) => {
@@ -37,10 +31,7 @@ class CategoryController {
 
     const category = await this.categoryRepo.update(id, { name });
 
-    res.status(200).json({
-      success: true,
-      category,
-    });
+    this.categoryRepo.ok(res, 200, category);
   });
 
   deleteCategory = catchAsyncErrors(async (req, res, next) => {
@@ -55,10 +46,7 @@ class CategoryController {
 
     await this.postRepo.deleteMany({ categoryId: id });
 
-    res.status(200).json({
-      success: true,
-      category,
-    });
+    this.categoryRepo.ok(res, 200, category);
   });
 }
 
