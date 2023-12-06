@@ -1,11 +1,12 @@
 const { Router } = require('express');
 
-const { editCategory } = require('../controllers/category.controller');
+const { editCategory, deleteCategory } = require('../controllers/category.controller');
 const { isAuthenticatedUser, authorizeRoles } = require('../middlewares/auth');
 
 const router = Router();
 
-router.put('/category/:id', isAuthenticatedUser, authorizeRoles('admin'), editCategory);
+router.put('/categories/:id', isAuthenticatedUser, authorizeRoles('admin'), editCategory);
+router.delete('/categories/:id', isAuthenticatedUser, authorizeRoles('admin'), deleteCategory);
 
 
 module.exports = router;
