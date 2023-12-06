@@ -69,11 +69,7 @@ class UserController {
 
     const token = user.getJwtToken();
 
-    res.status(201).json({
-      success: true,
-      user,
-      token,
-    });
+    this.userRepo.ok(res, 201, { user, token });
   });
 
   loginUser = catchAsyncErrors(async (req, res, next) => {
@@ -111,10 +107,7 @@ class UserController {
       httpOnly: true,
     });
 
-    res.status(200).json({
-      success: true,
-      message: 'Logged out',
-    });
+    this.userRepo.ok(res, 200, { message: 'Logged out' });
   });
 
   forgotPassword = catchAsyncErrors(async (req, res, next) => {
@@ -140,10 +133,7 @@ class UserController {
         message,
       });
 
-      res.status(200).json({
-        success: true,
-        message: `Email sent to: ${user.email}`,
-      });
+      this.userRepo.ok(res, 200, { message: `Email sent to: ${user.email}` });
     } catch (error) {
       user.resetPasswordToken = undefined;
       user.resetPasswordExpire = undefined;
@@ -187,10 +177,7 @@ class UserController {
   getUserProfile = catchAsyncErrors(async (req, res, next) => {
     const user = await this.userRepo.findById(req.user.id);
 
-    res.status(200).json({
-      success: true,
-      user,
-    });
+    this.userRepo.ok(res, 200, user);
   });
 
   updateUserProfile = catchAsyncErrors(async (req, res, next) => {
@@ -201,19 +188,13 @@ class UserController {
 
     const user = await this.userRepo.update(req.user.id, newUserData);
 
-    res.status(200).json({
-      success: true,
-      user,
-    });
+    this.userRepo.ok(res, 200, user);
   });
 
   getAllUsers = catchAsyncErrors(async (req, res, next) => {
     const users = await this.userRepo.getAll();
 
-    res.status(200).json({
-      success: true,
-      users,
-    });
+    this.userRepo.ok(res, 200, users);
   });
 }
 
