@@ -1,4 +1,6 @@
 const CategoryRepo = require('../repositories/category.repository');
+const PostRepo = require('../repositories/post.repository');
+const UserRepo = require('../repositories/user.repository');
 
 const ErrorHandler = require('../utils/errorHandler');
 const catchAsyncErrors = require('../middlewares/catchAsyncErrors');
@@ -6,6 +8,8 @@ const catchAsyncErrors = require('../middlewares/catchAsyncErrors');
 class CategoryController {
   constructor() {
     this.categoryRepo = new CategoryRepo();
+    this.postRepo = new PostRepo();
+    this.userRepo = new UserRepo();
   }
 
   createCategory = catchAsyncErrors(async (req, res, next) => {
@@ -44,6 +48,13 @@ class CategoryController {
     const { id } = req.params;
 
     const category = await this.categoryRepo.delete(id);
+
+    await this.userRepo.updateMany(
+      { 'posts.categoryId': id },
+      { $pull: { posts: { categoryId: id } } }
+    );
+
+    await this.postRepo.deleteMany({ categoryId: id });
 
     res.status(200).json({
       success: true,
