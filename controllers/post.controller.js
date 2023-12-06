@@ -44,6 +44,22 @@ class PostController {
     });
   });
 
+  editPost = catchAsyncErrors(async (req, res, next) => {
+    const { id } = req.params;
+    const { title, content, description, categoryId } = req.body;
+
+    await this.postRepo.update(id, {
+      title,
+      content,
+      description,
+      categoryId,
+    });
+
+    res.status(200).json({
+      success: true,
+      post,
+    });
+  });
 }
 
 module.exports = new PostController();
