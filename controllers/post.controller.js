@@ -30,7 +30,7 @@ class PostController {
     });
 
     await this.userRepo.update(req.user.id, {
-      $push: { posts: post._id },
+      $push: { posts: { postId: post._id, categoryId } },
     });
 
     category.posts.push(post._id);
@@ -43,10 +43,7 @@ class PostController {
   });
 
   getPosts = catchAsyncErrors(async (req, res, next) => {
-    const posts = await Posts.find().populate(
-      'categoryId authorId',
-      'name'
-    );
+    const posts = await Posts.find().populate('categoryId authorId', 'name');
 
     res.status(200).json({
       success: true,
