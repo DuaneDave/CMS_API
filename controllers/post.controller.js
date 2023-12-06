@@ -2,6 +2,7 @@ const Posts = require('../models/post.model');
 
 const PostRepo = require('../repositories/post.repository');
 const CategoryRepo = require('../repositories/category.repository');
+const UserRepo = require('../repositories/user.repository');
 
 const ErrorHandler = require('../utils/errorHandler');
 const catchAsyncErrors = require('../middlewares/catchAsyncErrors');
@@ -10,6 +11,7 @@ class PostController {
   constructor() {
     this.postRepo = new PostRepo();
     this.categoryRepo = new CategoryRepo();
+    this.userRepo = new UserRepo();
   }
 
   createPost = catchAsyncErrors(async (req, res, next) => {
@@ -24,6 +26,11 @@ class PostController {
       content,
       categoryId,
       description,
+      authorId: req.user.id,
+    });
+
+    await this.userRepo.update(req.user.id, {
+      $push: { posts: post._id },
     });
 
     category.posts.push(post._id);
@@ -36,7 +43,10 @@ class PostController {
   });
 
   getPosts = catchAsyncErrors(async (req, res, next) => {
-    const posts = await Posts.find().populate('categoryId', 'name');
+    const posts = await Posts.find().populate(
+      'categoryId authorId',
+      'name'
+    );
 
     res.status(200).json({
       success: true,
@@ -67,6 +77,10 @@ class PostController {
     const post = await this.postRepo.delete(id);
 
     await this.categoryRepo.update(post.categoryId, {
+      $pull: { posts: post._id },
+    });
+
+    await this.userRepo.update(post.authorId, {
       $pull: { posts: post._id },
     });
 
