@@ -32,8 +32,14 @@ const userSchema = new Schema(
     },
     posts: [
       {
-        type: Schema.Types.ObjectId,
-        ref: 'Post',
+        postId: {
+          type: Schema.Types.ObjectId,
+          ref: 'Post',
+        },
+        categoryId: {
+          type: Schema.Types.ObjectId,
+          ref: 'Category',
+        },
       },
     ],
     resetPasswordToken: String,
