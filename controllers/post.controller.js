@@ -48,11 +48,26 @@ class PostController {
     const { id } = req.params;
     const { title, content, description, categoryId } = req.body;
 
-    await this.postRepo.update(id, {
+    const post = await this.postRepo.update(id, {
       title,
       content,
       description,
       categoryId,
+    });
+
+    res.status(200).json({
+      success: true,
+      post,
+    });
+  });
+
+  deletePost = catchAsyncErrors(async (req, res, next) => {
+    const { id } = req.params;
+
+    const post = await this.postRepo.delete(id);
+
+    await this.categoryRepo.update(post.categoryId, {
+      $pull: { posts: post._id },
     });
 
     res.status(200).json({
