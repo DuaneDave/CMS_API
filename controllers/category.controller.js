@@ -19,6 +19,15 @@ class CategoryController {
       category,
     });
   });
+
+  getAllCategories = catchAsyncErrors(async (req, res, next) => {
+    const categories = await this.categoryRepo.getAll();
+
+    res.status(200).json({
+      success: true,
+      categories,
+    });
+  });
 }
 
 module.exports = new CategoryController();
