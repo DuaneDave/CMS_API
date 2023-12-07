@@ -51,6 +51,11 @@ class PostController {
     const { id } = req.params;
     const { title, content, description, categoryId } = req.body;
 
+    const foundPost = await this.postRepo.findById(id);
+
+    if (foundPost.authorId.toString() !== req.user.id)
+      return next(new ErrorHandler('You are not authorized to edit this post'));
+
     const post = await this.postRepo.update(id, {
       title,
       content,
