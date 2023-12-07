@@ -2,19 +2,20 @@ const crypto = require('crypto');
 
 const UserRepo = require('../repositories/user.repository');
 const User = require('../models/user.model');
+const BaseController = require('./base.controller');
 
 const ErrorHandler = require('../utils/errorHandler');
 const catchAsyncErrors = require('../middlewares/catchAsyncErrors');
 const sendToken = require('../utils/jwtToken');
 const sendEmail = require('../utils/sendEmail');
 
-class UserController {
+class UserController extends BaseController {
   constructor() {
-    this.userRepo = new UserRepo();
+    super(UserRepo);
   }
 
   async userExists(email) {
-    return await this.userRepo.getOne({ email });
+    return await this.model.getOne({ email });
   }
 
   async getOAuthDetails(googleAccessToken) {
@@ -50,7 +51,7 @@ class UserController {
 
       if (isExisting) return next(new ErrorHandler('User already exists', 400));
 
-      user = await this.userRepo.create({
+      user = await this.model.create({
         name,
         email,
         password,
@@ -60,7 +61,7 @@ class UserController {
 
       if (isExisting) return next(new ErrorHandler('User already exists', 400));
 
-      user = await this.userRepo.create({
+      user = await this.model.create({
         name,
         email,
         password,
@@ -69,9 +70,9 @@ class UserController {
 
     const token = user.getJwtToken();
 
-    this.userRepo.emitEvent('userCreated', `${user.name} user created`);
+    this.model.emitEvent('userCreated', `${user.name} user created`);
 
-    this.userRepo.ok(res, 201, { user, token });
+    this.model.ok(res, 201, { user, token });
   });
 
   loginUser = catchAsyncErrors(async (req, res, next) => {
@@ -82,7 +83,7 @@ class UserController {
     if (googleAccessToken) {
       const { email } = await this.getOAuthDetails(googleAccessToken);
 
-      user = await this.userRepo.getOne({ email });
+      user = await this.model.getOne({ email });
     } else {
       if (!email || !password)
         return next(new ErrorHandler('Please enter email & password', 400));
@@ -109,7 +110,7 @@ class UserController {
       httpOnly: true,
     });
 
-    this.userRepo.ok(res, 200, { message: 'Logged out' });
+    this.model.ok(res, 200, { message: 'Logged out' });
   });
 
   forgotPassword = catchAsyncErrors(async (req, res, next) => {
@@ -135,12 +136,12 @@ class UserController {
         message,
       });
 
-      this.userRepo.emitEvent(
+      this.model.emitEvent(
         'passwordReset',
         `Password reset email sent to: ${user.email}`
       );
 
-      this.userRepo.ok(res, 200, { message: `Email sent to: ${user.email}` });
+      this.model.ok(res, 200, { message: `Email sent to: ${user.email}` });
     } catch (error) {
       user.resetPasswordToken = undefined;
       user.resetPasswordExpire = undefined;
@@ -157,7 +158,7 @@ class UserController {
       .update(req.params.token)
       .digest('hex');
 
-    const user = await this.userRepo.getOne({ resetPasswordToken });
+    const user = await this.model.getOne({ resetPasswordToken });
     const expired = new Date(user?.resetPasswordExpire) > new Date() || false;
 
     if (!user || expired)
@@ -178,7 +179,7 @@ class UserController {
 
     await user.save();
 
-    this.userRepo.emitEvent(
+    this.model.emitEvent(
       'passwordReset',
       `Password reset successful for: ${user.email}`
     );
@@ -186,31 +187,15 @@ class UserController {
   });
 
   getUserProfile = catchAsyncErrors(async (req, res, next) => {
-    const user = await this.userRepo.findById(req.user.id);
+    const user = await this.model.findById(req.user.id);
 
-    this.userRepo.ok(res, 200, user);
-  });
-
-  updateUserProfile = catchAsyncErrors(async (req, res, next) => {
-    const newUserData = {
-      name: req.body.name,
-      email: req.body.email,
-    };
-
-    const user = await this.userRepo.update(req.user.id, newUserData);
-
-    this.userRepo.emitEvent(
-      'userUpdated',
-      `${user.name} updated their profile`
-    );
-
-    this.userRepo.ok(res, 200, user);
+    this.model.ok(res, 200, user);
   });
 
   getAllUsers = catchAsyncErrors(async (req, res, next) => {
-    const users = await this.userRepo.getAll();
+    const users = await this.model.getAll();
 
-    this.userRepo.ok(res, 200, users);
+    this.model.ok(res, 200, users);
   });
 }
 

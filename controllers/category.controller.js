@@ -1,12 +1,13 @@
 const CategoryRepo = require('../repositories/category.repository');
 const PostRepo = require('../repositories/post.repository');
 const UserRepo = require('../repositories/user.repository');
+const BaseController = require('./base.controller');
 
 const catchAsyncErrors = require('../middlewares/catchAsyncErrors');
 
-class CategoryController {
+class CategoryController extends BaseController {
   constructor() {
-    this.categoryRepo = new CategoryRepo();
+    super(CategoryRepo);
     this.postRepo = new PostRepo();
     this.userRepo = new UserRepo();
   }
@@ -14,40 +15,20 @@ class CategoryController {
   createCategory = catchAsyncErrors(async (req, res, next) => {
     const { name } = req.body;
 
-    const category = await this.categoryRepo.create({ name });
+    const category = await this.model.create({ name });
 
-    this.categoryRepo.emitEvent(
+    this.model.emitEvent(
       'categoryCreated',
       `${category.name} category created`
     );
 
-    this.categoryRepo.ok(res, 201, category);
-  });
-
-  getAllCategories = catchAsyncErrors(async (req, res, next) => {
-    const categories = await this.categoryRepo.getAll();
-
-    this.categoryRepo.ok(res, 200, categories);
-  });
-
-  editCategory = catchAsyncErrors(async (req, res, next) => {
-    const { id } = req.params;
-    const { name } = req.body;
-
-    const category = await this.categoryRepo.update(id, { name });
-
-    this.categoryRepo.emitEvent(
-      'categoryUpdated',
-      `${category.name} category updated`
-    );
-
-    this.categoryRepo.ok(res, 200, category);
+    this.model.ok(res, 201, category);
   });
 
   deleteCategory = catchAsyncErrors(async (req, res, next) => {
     const { id } = req.params;
 
-    const category = await this.categoryRepo.delete(id);
+    const category = await this.model.delete(id);
 
     await this.userRepo.updateMany(
       { 'posts.categoryId': id },
@@ -56,12 +37,12 @@ class CategoryController {
 
     await this.postRepo.deleteMany({ categoryId: id });
 
-    this.categoryRepo.emitEvent(
+    this.model.emitEvent(
       'categoryDeleted',
       `${category.name} category deleted`
     );
 
-    this.categoryRepo.ok(res, 200, category);
+    this.model.ok(res, 200, category);
   });
 }
 
