@@ -3,13 +3,15 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const socketio = require('socket.io');
 
 const errorMiddleware = require('./middlewares/errors');
 const corsOptions = require('./config/origin');
 const connectDatabase = require('./config/database');
 const api = require('./routes/api.routes');
+const handleConnection = require('./config/socket');
 
-const app = express();
+const { io, app, adminNamespace, httpServer } = handleConnection();
 
 dotenv.config();
 connectDatabase();
@@ -20,6 +22,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors(corsOptions()));
 
 app.use('/api/v1', api);
+adminNamespace.on('connection', (socket) => {
+  corsOptions.origin = socket.handshake.headers.origin;
+
+  console.log('connected');
+});
 app.use(errorMiddleware);
 
 process.on('uncaughtException', (err) => {
@@ -29,7 +36,7 @@ process.on('uncaughtException', (err) => {
   process.exit(1);
 });
 
-const server = app.listen(process.env.PORT || 3000, () => {
+const server = httpServer.listen(process.env.PORT || 3000, () => {
   console.log(`Server listening on PORT ${process.env.PORT || 3000}`);
 });
 
@@ -39,3 +46,5 @@ process.on('unhandledRejection', (err) => {
 
   server.close(() => process.exit(1));
 });
+
+module.exports = io;
