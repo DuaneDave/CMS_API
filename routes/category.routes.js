@@ -1,11 +1,11 @@
 const { Router } = require('express');
 
-const { createCategory, getAllCategories } = require('../controllers/category.controller');
+const { createCategory, getAll } = require('../controllers/category.controller');
 const { isAuthenticatedUser, authorizeRoles } = require('../middlewares/auth');
 
 const router = Router();
 
-router.get('/', getAllCategories);
+router.get('/', getAll());
 router.post('/', isAuthenticatedUser, createCategory);
 
 

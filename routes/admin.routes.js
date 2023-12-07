@@ -1,9 +1,6 @@
 const { Router } = require('express');
 
-const {
-  editCategory,
-  deleteCategory,
-} = require('../controllers/category.controller');
+const { edit, deleteCategory } = require('../controllers/category.controller');
 const { isAuthenticatedUser, authorizeRoles } = require('../middlewares/auth');
 
 const router = Router();
@@ -12,7 +9,7 @@ router.put(
   '/categories/:id',
   isAuthenticatedUser,
   authorizeRoles('admin'),
-  editCategory
+  edit('categoryUpdated', 'name', 'category updated')
 );
 router.delete(
   '/categories/:id',
