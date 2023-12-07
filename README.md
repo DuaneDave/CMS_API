@@ -107,6 +107,30 @@ To run the project, execute the following command:
   npm run prod to run the project in production mode
 ```
 
+### Run checks on the activiy feed
+
+<p>
+You can utilize postman for hooking up with the socket at the backend. To do this, you need to send a post request to the following route
+</p>
+
+```sh
+  http://localhost:8080/api/v1/admin
+```
+
+<p>
+Once the connection is successful, you can hook up on the following events
+</p>
+
+```sh
+  postDeleted
+  postCreated
+  postUpdated
+  categoryCreated
+  categoryUpdated
+  categoryDeleted
+  userCreated
+  userUpdated
+```
 
 ## ❓ FAQ (OPTIONAL) <a name="faq"></a>
 
