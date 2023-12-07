@@ -1,3 +1,7 @@
+const handleConnection = require('../config/socket');
+
+const { adminNamespace } = handleConnection();
+
 class BaseRepository {
   constructor(model) {
     this.model = model;
@@ -23,7 +27,7 @@ class BaseRepository {
     return await this.model.updateMany(conditions, entity);
   }
 
-  async findById (id) {
+  async findById(id) {
     return await this.model.findById(id);
   }
 
@@ -34,6 +38,12 @@ class BaseRepository {
   async deleteMany(conditions) {
     return await this.model.deleteMany(conditions);
   }
+
+  emitEvent = (event, message) => {
+    adminNamespace.emit(event, {
+      message,
+    });
+  };
 
   ok(res, code, data) {
     return res.status(code).json({
