@@ -11,8 +11,8 @@ class BaseRepository {
     return await this.model.findOne(param);
   }
 
-  async getAll() {
-    return await this.model.find();
+  async getAll(options = '', field = '') {
+    return await this.model.find().populate(options, field);
   }
 
   async create(entity) {
