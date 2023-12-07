@@ -36,6 +36,7 @@
 - **CRUD operations on the category route**
 - **CRUD operations on the user**
 - **Database relationship**
+- **Proper error handling of all requests**
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
