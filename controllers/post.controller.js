@@ -59,6 +59,13 @@ class PostController extends BaseController {
   deletePost = catchAsyncErrors(async (req, res, next) => {
     const { id } = req.params;
 
+    const foundPost = await this.model.findById(id);
+
+    if (foundPost.authorId.toString() !== req.user.id)
+      return next(
+        new ErrorHandler('You are not authorized to delete this post')
+      );
+
     const post = await this.model.delete(id);
 
     await this.categoryRepo.update(post.categoryId, {
