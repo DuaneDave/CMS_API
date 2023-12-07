@@ -65,6 +65,28 @@ Clone this repository to your desired folder:
   git clone https://github.com/DuaneDave/CMS_API.git
 ```
 
+```sh
+  create a .env file in the root directory and add the following variables
+
+  PORT = 8080
+  NODE_ENV = DEVELOPMENT
+  DB_URI = your mongo db URI
+
+
+  JWT_EXPIRES_TIME = 3d
+  JWT_SECRET = bdjbbiugiuwehohfibifhhwioufgwftu
+  COOKIE_EXPIRES_TIME = 3
+  RESET_PASSWORD_EXPIRES_TIME = 10
+
+  MAIL_USERNAME = your gmail address
+  MAIL_PASSWORD = your gmail password
+  OAUTH_CLIENTID = your google oauth client id
+  OAUTH_CLIENT_SECRET = your google oauth client secret
+  OAUTH_REFRESH_TOKEN = your google oauth refresh token
+  OAUTH_FROM_EMAIL = noreply@afrobean.com
+  OAUTH_FROM_NAME = CMS_API
+```
+
 ### Install
 
 Install this project with:
