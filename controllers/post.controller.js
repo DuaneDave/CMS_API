@@ -36,6 +36,8 @@ class PostController {
     category.posts.push(post._id);
     await category.save();
 
+    this.postRepo.emitEvent('postCreated', `${post.title} post created`);
+
     this.postRepo.ok(res, 201, post);
   });
 
@@ -56,6 +58,8 @@ class PostController {
       categoryId,
     });
 
+    this.postRepo.emitEvent('postUpdated', `${post.title} post got updated`);
+
     this.postRepo.ok(res, 200, post);
   });
 
@@ -71,6 +75,8 @@ class PostController {
     await this.userRepo.update(post.authorId, {
       $pull: { posts: post._id },
     });
+
+    this.postRepo.emitEvent('postDeleted', `${post.title} post got deleted`);
 
     this.postRepo.ok(res, 200, post);
   });

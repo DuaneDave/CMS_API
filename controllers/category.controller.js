@@ -16,6 +16,11 @@ class CategoryController {
 
     const category = await this.categoryRepo.create({ name });
 
+    this.categoryRepo.emitEvent(
+      'categoryCreated',
+      `${category.name} category created`
+    );
+
     this.categoryRepo.ok(res, 201, category);
   });
 
@@ -31,6 +36,11 @@ class CategoryController {
 
     const category = await this.categoryRepo.update(id, { name });
 
+    this.categoryRepo.emitEvent(
+      'categoryUpdated',
+      `${category.name} category updated`
+    );
+
     this.categoryRepo.ok(res, 200, category);
   });
 
@@ -45,6 +55,11 @@ class CategoryController {
     );
 
     await this.postRepo.deleteMany({ categoryId: id });
+
+    this.categoryRepo.emitEvent(
+      'categoryDeleted',
+      `${category.name} category deleted`
+    );
 
     this.categoryRepo.ok(res, 200, category);
   });

@@ -69,6 +69,8 @@ class UserController {
 
     const token = user.getJwtToken();
 
+    this.userRepo.emitEvent('userCreated', `${user.name} user created`);
+
     this.userRepo.ok(res, 201, { user, token });
   });
 
@@ -133,6 +135,11 @@ class UserController {
         message,
       });
 
+      this.userRepo.emitEvent(
+        'passwordReset',
+        `Password reset email sent to: ${user.email}`
+      );
+
       this.userRepo.ok(res, 200, { message: `Email sent to: ${user.email}` });
     } catch (error) {
       user.resetPasswordToken = undefined;
@@ -171,6 +178,10 @@ class UserController {
 
     await user.save();
 
+    this.userRepo.emitEvent(
+      'passwordReset',
+      `Password reset successful for: ${user.email}`
+    );
     sendToken(user, 200, res);
   });
 
@@ -187,6 +198,11 @@ class UserController {
     };
 
     const user = await this.userRepo.update(req.user.id, newUserData);
+
+    this.userRepo.emitEvent(
+      'userUpdated',
+      `${user.name} updated their profile`
+    );
 
     this.userRepo.ok(res, 200, user);
   });
