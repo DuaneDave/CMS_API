@@ -191,12 +191,6 @@ class UserController extends BaseController {
 
     this.model.ok(res, 200, user);
   });
-
-  getAllUsers = catchAsyncErrors(async (req, res, next) => {
-    const users = await this.model.getAll();
-
-    this.model.ok(res, 200, users);
-  });
 }
 
 module.exports = new UserController();

@@ -11,7 +11,6 @@ const catchAsyncErrors = require('../middlewares/catchAsyncErrors');
 class PostController extends BaseController {
   constructor() {
     super(PostRepo);
-    // this.postRepo = new PostRepo();
     this.categoryRepo = new CategoryRepo();
     this.userRepo = new UserRepo();
   }

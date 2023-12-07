@@ -8,7 +8,7 @@ const {
   resetPassword,
   getUserProfile,
   edit,
-  getAllUsers,
+  getAll,
 } = require('../controllers/user.controller');
 const { isAuthenticatedUser } = require('../middlewares/auth');
 
@@ -21,7 +21,11 @@ router.post('/reset_password/:token', resetPassword);
 
 router.get('/logout', isAuthenticatedUser, logOut);
 router.get('/profile', isAuthenticatedUser, getUserProfile);
-router.put('/profile/update/:id', isAuthenticatedUser, edit('userUpdated', 'name', 'user updated'));
-router.get('/all', isAuthenticatedUser, getAllUsers);
+router.put(
+  '/profile/update/:id',
+  isAuthenticatedUser,
+  edit('userUpdated', 'name', 'user updated')
+);
+router.get('/all', isAuthenticatedUser, getAll());
 
 module.exports = router;
