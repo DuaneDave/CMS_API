@@ -42,7 +42,7 @@
 
 ## API-Documentation <a name="api-documentation"></a>
 
-- [Link To Documentation](https://web.postman.co/documentation/24263371-68bba15a-6cfe-4c3c-aafd-ab022af77273/publish?workspaceId=58fa59bb-c1cc-4840-8d7c-0fdaf11e4202)
+- [Link To Documentation](https://documenter.getpostman.com/view/24263371/2s9YkgBjfH)
 
 
 ## 💻 Getting Started <a name="getting-started"></a>
